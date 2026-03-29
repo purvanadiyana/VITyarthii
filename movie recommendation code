@@ -1,0 +1,66 @@
+movies = [
+    {"title": "3 idiots", "mood": "fun happy inspirational", "language": "hindi"},
+    {"title": "the shawshank redemption", "mood": "sad inspirational", "language": "english"},
+    {"title": "the dark knight", "mood": "action thrilling", "language": "english"},
+    {"title": "lagaan", "mood": "fun inspirational", "language": "hindi"},
+    {"title": "inception", "mood": "thrilling mindbending", "language": "english"},
+    {"title": "dangal", "mood": "inspirational emotional", "language": "hindi"},
+    {"title": "the godfather", "mood": "crime dramatic", "language": "english"},
+    {"title": "taare zameen par", "mood": "emotional inspirational", "language": "hindi"},
+]
+
+# AI brain (synonyms)
+mood_map = {
+    "happy": ["happy", "fun", "joy"],
+    "fun": ["fun", "happy", "enjoy"],
+    "sad": ["sad", "emotional"],
+    "thrilling": ["thrilling", "action", "exciting"],
+    "inspirational": ["inspirational", "motivational"],
+}
+
+# user input
+user_mood = input("Enter your mood: ").lower().replace(",", "")
+user_language = input("Enter language (hindi/english): ").lower()
+
+# expand mood (AI thinking)
+def expand_mood(text):
+    words = text.split()
+    expanded = []
+
+    for word in words:
+        if word in mood_map:
+            expanded.extend(mood_map[word])
+        else:
+            expanded.append(word)
+
+    return set(expanded)
+
+# similarity
+def similarity(a, b):
+    return len(a & b)
+
+user_set = expand_mood(user_mood)
+
+best_movies = []
+
+for movie in movies:
+    if movie["language"] == user_language:
+        movie_set = set(movie["mood"].split())
+        score = similarity(user_set, movie_set)
+
+        best_movies.append((score, movie["title"]))
+
+# sort by score
+best_movies.sort(key=lambda x: x[0], reverse=True)
+
+print("\nRecommended movies:\n")
+
+found = False
+
+for score, title in best_movies:
+    if score > 0:
+        print(title)
+        found = True
+
+if not found:
+    print("No matching movies found")
